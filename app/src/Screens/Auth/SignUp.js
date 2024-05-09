@@ -65,7 +65,7 @@ const SignUp = () => {
   const handleSubmit = async () => {
   try {
     const res = await axios.post(
-      'http://192.168.10.30:8080/pharmacy/signup',
+      'http://192.168.18.29:8080/pharmacy/signup',
       {
         name,
         email,

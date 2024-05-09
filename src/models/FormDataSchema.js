@@ -6,26 +6,26 @@ const formDataSchema = new mongoose.Schema(
   {
     medicineName: String,
     prescription: String,
-       name: String,
+    name: String,
     email: String,
     user_id: String,
     status: {
       type: String,
-      default: "Pending", 
+      default: "Pending",
       enum: ["Pending", "Confirmed", "Delivered", "Cancelled"],
     },
     orders: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Order", 
+        ref: "Order",
       },
     ],
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user", 
+      ref: "user",
     },
-  
-   pharmacyResponses: [
+
+    pharmacyResponses: [
       {
         pharmacy: {
           type: mongoose.Schema.Types.ObjectId,
@@ -36,25 +36,25 @@ const formDataSchema = new mongoose.Schema(
           enum: ["Yes", "No", "Pending"],
           default: "Pending",
         },
-     
-       deliveryTime: {
-      type: String,
-      required: true
-    },
-    pharmacyName: {
-      type: String,
-      required: true
-    },
-    pharmacyAddress: {
-      type: String,
-      required: true
-    },
-    pharmacyPhone: {
-      type: String,
-      required: true
-    }
-      
-     },
+
+        deliveryTime: {
+          type: String,
+          required: true
+        },
+        pharmacyName: {
+          type: String,
+          required: true
+        },
+        pharmacyAddress: {
+          type: String,
+          required: true
+        },
+        pharmacyPhone: {
+          type: String,
+          required: true
+        }
+
+      },
     ],
 
 

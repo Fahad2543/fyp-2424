@@ -2,7 +2,7 @@
   "name": "MedlocateApps",
   "version": "5.12.14",
   "main": "node_modules/expo/AppEntry.js",
-  "proxy": "http://192.168.10.30:8080",
+  "proxy": "http://192.168.18.29:8080",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",

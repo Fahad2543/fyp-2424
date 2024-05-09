@@ -1,32 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import api from '../apis/api';
+import axios from 'axios';
+
+const DATA = [
+  {
+    "_id": "663bca72b67ce89c2829b959",
+    "name": "user22",
+    "medicineName": "wjwow",
+    "prescription": "http://res.cloudinary.com/do2jxbuft/image/upload/v1715194480/dsd9fpf3ttu6iedkvfca.jpg"
+  },
+]
 
 const ChatScreen = () => {
-  const [formDataList, setFormDataList] = useState([]);
+  const [formDataList, setFormDataList] = useState(DATA);
 
   useEffect(() => {
     // Fetch the form data when the component mounts
-    fetch('http://192.168.100.109:8080/getallformdata')
-      .then(response => response.json())
-      .then(data => setFormDataList(data))
-      .catch(error => console.error('Error fetching form data:', error));
+    getAllData()
   }, []);
 
-  const handleResponse = (id, response) => {
+  const getAllData = async () => {
+    try {
+      const { data } = await axios.get('http://192.168.18.29:8080/getallformdata');
+      setFormDataList(data);
+      console.log(data)
+
+    } catch (error) {
+      console.error('Error fetching form data:', error);
+    }
+  }
+
+  const handleResponse = async (id, response) => {
     // Send the response to the backend
-    fetch('http://192.168.100.109:8080/respond', {
+
+    console.log(id, 'od....')
+    const responseObj = {
+      pharmacy: "663c69bc7195053d1beb433d",
+      response: response
+    }
+
+    // console.log(responseObj)
+    // return
+    await fetch('http://192.168.18.29:8080/respond', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id, response }),
+      body: JSON.stringify({
+        id, pharmacyResponse: responseObj
+      }),
     })
       .then(response => response.json())
       .then(data => {
-        if (data.success) {
-          // Remove the item from the list
-          setFormDataList(currentList => currentList.filter(item => item._id !== id));
-        }
+        console.log(data, 'data')
+        // if (data.success) {
+        //   // Remove the item from the list
+        //   setFormDataList(currentList => currentList.filter(item => item._id !== id));
+        // }
       })
       .catch(error => console.error('Error sending response:', error));
   };
@@ -43,13 +74,13 @@ const ChatScreen = () => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, styles.yesButton]}
-              onPress={() => handleResponse(item._id, 'Yes')}
+              onPress={() => handleResponse(item._id, 'Yes Available')}
             >
               <Text style={styles.buttonText}>Yes</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.noButton]}
-              onPress={() => handleResponse(item._id, 'No')}
+              onPress={() => handleResponse(item._id, 'Not Available')}
             >
               <Text style={styles.buttonText}>No</Text>
             </TouchableOpacity>

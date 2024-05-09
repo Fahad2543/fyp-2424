@@ -5,53 +5,90 @@ import SubmitButton from "../../../components/SubmitButton";
 import api from "../../apis/api";
 
 const Login = ({ navigation }) => {
- const [email, setEmail] = useState("");
- const [password, setPassword] = useState("");
- const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
- const handleSubmit = async () => {
+  // const handleSubmit = async () => {
+  //   try {
+  //     setLoading(true);
+  //     if (!email || !password) {
+  //       Alert.alert("Please fill empty boxes");
+  //       setLoading(false);
+  //       return;
+  //     }
+  //     const { data } = await api.post(
+  //       '/login',
+  //       { email, password }
+  //     );
+
+  //     if (response.status === 201 || response.status === 200){
+
+  //     }
+  //     console.log(data, 'data..')
+
+  //     if (data && data.token)
+  //     //  if (res && res.data.success)
+  //     {
+  //       // await storeToken(data.token); // Store the token
+  //       setAuth({
+  //         ...auth,
+  //         // user: data.user,
+  //         token: data?.token,
+
+  //       })
+  //       localStorage.setItem("auth", JSON.stringify(data?.token));
+  //       // localStorage.setItem("user_id", res.data.id);
+  //       navigation.navigate('HomeScreen');
+
+  //       setEmail("");
+  //       setPassword("");
+  //     }
+  //     navigation.navigate('Home');
+  //     setEmail("");
+  //     setPassword("");
+  //     setLoading(false);
+  //   } catch (error) {
+  //     Alert.alert(error);
+  //     setLoading(false);
+  //     console.log(error);
+  //   }
+  // };
+
+  const handleSubmit = async () => {
+
     try {
-      setLoading(true);
-      if (!email || !password) {
-        Alert.alert("Please fill empty boxes");
-        setLoading(false);
-        return;
-      }
-      const { data } = await api.post(
-        '/login',
-        { email, password }
+      const user = {
+        email: email,
+        password: password,
+      };
+      // hitting the backend API
+      const response = await api.post(
+        "/login",
+        user
       );
+      console.log(response);
+      if (response.status === 201 || response.status === 200) {
+        // accessing the token
+        const token = response.data.token;
 
+        // storing the token in async Storage!
+        AsyncStorage.setItem("authToken", token);
 
-         // if (data && data.token)
-           if (res && res.data.success)
-      {
-        // await storeToken(data.token); // Store the token
-        setAuth({
-          ...auth,
-          user: res.data.user,
-          token: res.data.token,
-          
-        })
-               localStorage.setItem("auth", JSON.stringify(res.data));
-          localStorage.setItem("user_id", res.data.id);
-             navigation.navigate('HomeScreen');
-        
-             setEmail("");
-        setPassword("");
+        // navigating to the Home Screen!
+        navigation.replace("HomeScreen");
+      } else {
+        Alert.alert("Login Error", "Invalid email or password!");
+        console.log(response.status);
       }
-        navigation.navigate('Home');
-      setEmail("");
-      setPassword("");
-      setLoading(false);
     } catch (error) {
-      Alert.alert(error.response.data.message);
-      setLoading(false);
-      console.log(error);
+      // Handle errors from the request or AsyncStorage
+      console.error("Login error:", error);
+      Alert.alert("Login Error", "An error occurred during login.");
     }
- };
+  };
 
- return (
+  return (
     <View style={styles.container}>
       <Text style={styles.pagetital}>MedLocate</Text>
       <View>
@@ -83,7 +120,7 @@ const Login = ({ navigation }) => {
         </Text>
       </Text>
     </View>
- );
+  );
 };
 
 
@@ -102,12 +139,12 @@ const styles = StyleSheet.create({
     color: "#3AAFA9",
     fontWeight: "bold",
   },
-pagetital: {
+  pagetital: {
     marginBottom: 10,
     fontSize: 30,
     color: "#3AAFA9",
     fontWeight: "bold",
- },
+  },
 
   input: {
     height: 50, // Increased height for better touch area

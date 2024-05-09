@@ -25,7 +25,7 @@ const NotificationPopup = ({ notifications, onClose }) => {
             <ul className="notification-list">
               {notifications.map((notification) => (
                 <li key={notification.id} className="notification-item">
-                  <strong>{notification.title}</strong>: {notification.message}
+                  <strong>{notification.pharmacy_name}</strong>: {notification.response}
                   <button
                     className="chat-button"
                     onClick={() => handleChatButtonClick(notification.id)}

@@ -83,15 +83,18 @@ export const submitForm = async (req, res) => {
 
 
 export const respond = async (req, res) => {
- try {
-    const { id, response } = req.body;
-    await FormData.findByIdAndUpdate(id, { $set: { response } });
-    res.json({ success: true });
- } catch (error) {
+  try {
+    const { id, pharmacyResponse,  } = req.body;
+    console.log(req.body,'body')
+    const updatedFormData = await FormData.findByIdAndUpdate(id, { $push: { pharmacyResponses: pharmacyResponse } }, { new: true });
+    console.log("updatedFormData",updatedFormData)
+    res.json({ success: true, updatedFormData });
+  } catch (error) {
     console.error("Error responding to request:", error);
-    res.status(500).json({ success: true, error: "Internal Server Error" });
- }
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
 };
+
 
 export const pharmacyResponsesYes = async (req, res) => {
  try {
@@ -116,15 +119,20 @@ export const pharmacyResponsesYes = async (req, res) => {
 export const getAllFormData = async (req, res) => {
   try {
 
-    const formData = await FormData.find({}, 'name medicineName prescription').exec();
+    const formData = await FormData.find().populate({
+      path: "pharmacyResponses",
+      populate: {
+        path: "pharmacy",
+      },
+    })
     
-    const responseData = formData.map(data => ({
-      name: data.name, 
-      medicineName: data.medicineName,
-      prescription: data.prescription
-    }));
+    // const responseData = formData.map(data => ({
+    //   name: data.name, 
+    //   medicineName: data.medicineName,
+    //   prescription: data.prescription
+    // }));
 
-    res.json(responseData);
+    res.json(formData);
   } catch (error) {
     console.error("Error fetching form data:", error);
     res.status(500).json({ error: "Internal Server Error" });

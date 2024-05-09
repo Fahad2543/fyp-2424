@@ -1,20 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import toast from "react-hot-toast";
 import useCategory from "../../hooks/useCategory";
 // import { useCart } from "../../context/cart";
 import NotificationPopup from "../../pages/components/Notificationdropdown";
+import axios from 'axios';
+
 const Header = () => {
   const [auth, setAuth] = useAuth();
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+
+
+
   const notifications = [
     { id: 1, title: "Babar Pharmacy", message: "Yes i have available." },
     { id: 2, title: "Ali Pharmacy", message: "Not available." },
     { id: 2, title: "Balti pharmacy", message: "Yes i have available." },
   ];
+
+
+  const [allNotifications, setAllNotifications] = useState([]);
+
+  useEffect(() => {
+    getAllNotifications()
+  }, [])
+
+  const getAllNotifications = async () => {
+    try {
+      const response = await axios.get('http://192.168.18.29:8080/getallformdata');
+      // setAllNotifications(response.data);
+
+      const formattedData = response.data.reduce((accumulator, currentItem) => {
+        currentItem.pharmacyResponses.forEach(response => {
+          accumulator.push({
+            medicineId: currentItem._id,
+            medicineName: currentItem.medicineName,
+            pharmacy_id: response.pharmacy._id,
+            pharmacy_name: response.pharmacy.name,
+            response: response.response
+          });
+        });
+        setAllNotifications(accumulator)
+        return accumulator;
+      }, []);
+
+      console.log(formattedData,'formattedData');
+
+    } catch (error) {
+      console.error('Error fetching form data:', error);
+    }
+  };
+
   // const [cart] = useCart();
   const categories = useCategory();
   const handleLogout = () => {
@@ -39,7 +78,7 @@ const Header = () => {
     <>
       <nav
         className="navbar navbar-expand-lg navbar navbar-expand-lg fixed-top"
-        style={{ color: "#FFFFFF", height:35 }}
+        style={{ color: "#FFFFFF", height: 35 }}
       >
         <div className="container-fluid">
           <button
@@ -151,7 +190,7 @@ const Header = () => {
                       Help
                     </NavLink>
                   </li>
-                   <li className="nav-item">
+                  <li className="nav-item">
                     <NavLink
                       to="/help"
                       className="nav-link"
@@ -182,9 +221,8 @@ const Header = () => {
                     <ul className="dropdown-menu">
                       <li>
                         <NavLink
-                          to={`/dashboard/${
-                            auth?.user?.role === 1 ? "admin" : "user"
-                          }`}
+                          to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"
+                            }`}
                           className="dropdown-item"
                         >
                           Dashboard
@@ -211,7 +249,7 @@ const Header = () => {
 
         <li>
           <Link onClick={togglePopup}>
-            <img style={{height:30}}
+            <img style={{ height: 30 }}
               className="bellnotification"
               src={require("../../assets/bell.png")}
               alt="Notifications"
@@ -220,7 +258,7 @@ const Header = () => {
         </li>
         {showPopup && (
           <NotificationPopup
-            notifications={notifications}
+            notifications={allNotifications}
             onClose={togglePopup}
           />
         )}

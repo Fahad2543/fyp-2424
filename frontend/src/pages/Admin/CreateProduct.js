@@ -12,7 +12,7 @@ const CreateCategory = () => {
 
   useEffect(() => {
     // Fetch users from your backend
-    axios.get('http://localhost:8080/pharmacy/userdata')
+    axios.get('http://192.168.18.29:8080/pharmacy/userdata')
       .then(response => {
         // Filter users with role 1 and exclude user with email "admin@medlocate.com"
       
@@ -72,14 +72,14 @@ const CreateCategory = () => {
           </tr>
         </thead>
         <tbody>
-          {pharmacies.map((pharmacy) => (
+          {/* {pharmacies?.map((pharmacy) => (
             <tr key={pharmacy._id}>
               <td>{pharmacy.name}</td>
               <td>{pharmacy.address}</td>
               <td>{pharmacy.phone}</td>
               <td>{pharmacy.licenseNumber}</td>
             </tr>
-          ))}
+          ))} */}
         </tbody>
       </table>
     </div>
